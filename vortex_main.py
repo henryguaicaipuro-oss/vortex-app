@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
 
-# Configuración básica
-st.set_page_config(page_title="VORTEX", layout="centered")
+st.set_page_config(page_title="VORTEX", layout="wide")
 
-# Lógica de carga
 SHEET_ID = st.secrets["SHEET_ID"]
 
 @st.cache_data(ttl=60)
@@ -12,7 +10,6 @@ def get_data(sheet_name):
     url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
     return pd.read_csv(url)
 
-# --- SISTEMA DE SESIÓN ---
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
@@ -34,29 +31,29 @@ if not st.session_state.logged_in:
             st.error(f"Error: {e}")
     st.stop()
 
-# --- PANEL PRINCIPAL (HOME) ---
+# --- PANEL PRINCIPAL ---
 user = st.session_state.user
-st.title(f"🚀 BIENVENIDO, {user['Name']}")
-st.write(f"Plan Activo: **{user['Plan']}**")
+st.title(f"🚀 VORTEX | BIENVENIDO, {user['Name']}")
+st.markdown("---")
 
 try:
     df_picks = get_data("PICKS")
-    # Usamos contenedores nativos que ya vienen con diseño profesional
+    # Filtramos para mostrar
     for _, row in df_picks.iterrows():
         if row['Categoria_VIP'] == user['Plan'] or row['Categoria_VIP'] == 'Básico':
-            with st.container(border=True):
-                st.subheader(f"🏀 {row['Juego']}")
+            # Estructura de tarjeta con columnas para mejor legibilidad
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.markdown(f"### 🏀 {row['Juego']}")
                 st.write(f"**Pick:** {row['Pick']} | **Mercado:** {row['Mercado']}")
-                
-                # Análisis desplegable
-                with st.expander("🔍 Ver Análisis"):
-                    st.write("**Técnico:**")
-                    st.info(row['Analisis_Tecnico'])
-                    st.write("**Narrativo:**")
-                    st.success(row['Analisis_Narrativo'])
+            with col2:
+                st.metric("Probabilidad", f"{row['Probabilidad']}%")
+            
+            with st.expander("🔍 Ver Análisis Técnico y Narrativo"):
+                st.markdown("**Técnico:**")
+                st.info(row['Analisis_Tecnico'])
+                st.markdown("**Narrativo:**")
+                st.success(row['Analisis_Narrativo'])
+            st.markdown("---") # Separador visual claro
 except Exception:
-    st.error("Error al cargar los datos.")
-
-if st.button("Cerrar Sesión"):
-    st.session_state.logged_in = False
-    st.rerun()
+    st.error("Error al cargar los datos. Verifica la pestaña 'PICKS'.")
