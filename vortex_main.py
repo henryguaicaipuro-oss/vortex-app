@@ -1,56 +1,20 @@
 import streamlit as st
+import pandas as pd
 
-# 1. CONFIGURACIÓN DE PÁGINA
-st.set_page_config(page_title="VORTEX INTELLIGENCE", layout="wide")
+# 1. Cargamos datos
+df = pd.read_csv("https://docs.google.com/spreadsheets/d/TU_ID/gviz/tq?tqx=out:csv&sheet=PICKS")
 
-# 2. CSS PARA EL LOOK TECNOLÓGICO (Fondo, Bordes, Menú)
-st.markdown("""
-    <style>
-    .stApp {
-        background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1920');
-        background-size: cover;
-        background-attachment: fixed;
-    }
-    .main-container {
-        background-color: rgba(13, 17, 23, 0.85);
-        border: 1px solid #30363d;
-        border-radius: 15px;
-        padding: 30px;
-        margin-top: 50px;
-    }
-    .nav-bar {
-        display: flex;
-        justify-content: space-around;
-        background: rgba(22, 27, 34, 0.9);
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #58a6ff;
-    }
-    .nav-item { color: #ffffff; text-decoration: none; font-weight: bold; font-size: 14px; }
-    </style>
-""", unsafe_allow_html=True)
+# 2. Layout simple (sin CSS complejo)
+st.set_page_config(layout="wide")
 
-# 3. MENÚ SUPERIOR (Navegación)
-st.markdown("""
-    <div class='nav-bar'>
-        <a class='nav-item' href='#'>[HOME]</a>
-        <a class='nav-item' href='#'>[NOSOTROS]</a>
-        <a class='nav-item' href='#'>[DEPORTES]</a>
-        <a class='nav-item' href='#'>[EFECTIVIDAD]</a>
-        <a class='nav-item' href='#'>[PLANES]</a>
-        <a class='nav-item' href='#' style='color:#58a6ff;'>[SUSCRIPCIÓN]</a>
-        <a class='nav-item' href='#'>[CONTACTO]</a>
-    </div>
-""", unsafe_allow_html=True)
+# Barra lateral para navegación (Botones nativos)
+nav = st.sidebar.radio("MENÚ VORTEX", ["HOME", "DEPORTES", "EFECTIVIDAD"])
 
-# 4. LOGIN CENTRADO
-st.markdown('<div class="main-container">', unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; color: white;'>🔐 VORTEX LOGIN</h1>", unsafe_allow_html=True)
+if nav == "HOME":
+    st.title("BIENVENIDO AL DASHBOARD")
+    st.metric("Total Picks", len(df))
+elif nav == "DEPORTES":
+    st.title("ANÁLISIS DEPORTIVO")
+    st.dataframe(df)
 
-user = st.text_input("Usuario")
-pw = st.text_input("Contraseña", type="password")
-
-if st.button("ACCEDER"):
-    st.write("Conectando...")
-    
-st.markdown('</div>', unsafe_allow_html=True)
+# Esto es 100% gratuito, se publica en 1 clic y es profesional
