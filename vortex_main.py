@@ -1,59 +1,37 @@
 import streamlit as st
-import pandas as pd
 
-st.set_page_config(page_title="VORTEX", layout="wide")
+# Configuración de página
+st.set_page_config(page_title="VORTEX INTELLIGENCE", layout="wide")
 
-SHEET_ID = st.secrets["SHEET_ID"]
+# CSS para el Fondo estilo "Dashboard Tech" y contenedor principal
+st.markdown("""
+    <style>
+    /* Fondo oscuro con degradado profesional */
+    .stApp {
+        background: radial-gradient(circle at center, #1b2631 0%, #0d1117 100%);
+        color: #e6edf3;
+    }
+    
+    /* Contenedor central con borde neón sutil */
+    .main-box {
+        background-color: rgba(22, 27, 34, 0.8);
+        border: 1px solid #30363d;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-@st.cache_data(ttl=60)
-def get_data(sheet_name):
-    url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-    return pd.read_csv(url)
+# Estructura del Layout
+st.markdown('<div class="main-box">', unsafe_allow_html=True)
+st.title("🔐 VORTEX LOGIN")
+st.write("Bienvenido al sistema de inteligencia deportiva.")
 
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = False
+# Espacio para los inputs (aquí irán los botones en el siguiente paso)
+user = st.text_input("Usuario")
+pw = st.text_input("Contraseña", type="password")
+if st.button("ACCEDER"):
+    st.write("Autenticando...")
 
-if not st.session_state.logged_in:
-    st.title("🔐 VORTEX LOGIN")
-    user_input = st.text_input("Usuario")
-    pass_input = st.text_input("Contraseña", type="password")
-    if st.button("ACCEDER"):
-        try:
-            df = get_data("USUARIOS")
-            user_row = df[(df['User'].astype(str) == user_input) & (df['Pass'].astype(str) == pass_input)]
-            if not user_row.empty:
-                st.session_state.logged_in = True
-                st.session_state.user = user_row.iloc[0]
-                st.rerun()
-            else:
-                st.error("Credenciales incorrectas")
-        except Exception as e:
-            st.error(f"Error: {e}")
-    st.stop()
-
-# --- PANEL PRINCIPAL ---
-user = st.session_state.user
-st.title(f"🚀 VORTEX | BIENVENIDO, {user['Name']}")
-st.markdown("---")
-
-try:
-    df_picks = get_data("PICKS")
-    # Filtramos para mostrar
-    for _, row in df_picks.iterrows():
-        if row['Categoria_VIP'] == user['Plan'] or row['Categoria_VIP'] == 'Básico':
-            # Estructura de tarjeta con columnas para mejor legibilidad
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                st.markdown(f"### 🏀 {row['Juego']}")
-                st.write(f"**Pick:** {row['Pick']} | **Mercado:** {row['Mercado']}")
-            with col2:
-                st.metric("Probabilidad", f"{row['Probabilidad']}%")
-            
-            with st.expander("🔍 Ver Análisis Técnico y Narrativo"):
-                st.markdown("**Técnico:**")
-                st.info(row['Analisis_Tecnico'])
-                st.markdown("**Narrativo:**")
-                st.success(row['Analisis_Narrativo'])
-            st.markdown("---") # Separador visual claro
-except Exception:
-    st.error("Error al cargar los datos. Verifica la pestaña 'PICKS'.")
+st.markdown('</div>', unsafe_allow_html=True)
