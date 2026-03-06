@@ -1,44 +1,36 @@
 import streamlit as st
 
-# Configuración inicial
+# 1. Ajuste de configuración
 st.set_page_config(page_title="VORTEX", layout="wide")
 
-# CSS para la barra de navegación tipo "Menú de Diseño"
+# 2. CSS simplificado (solo estilo de botones)
 st.markdown("""
     <style>
-    /* Resetear márgenes para que el menú pegue arriba */
-    .block-container { padding-top: 2rem; }
-    
-    .nav-bar-vortex {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        padding: 20px;
-        background: rgba(0, 0, 0, 0.4);
-        border-bottom: 1px solid rgba(88, 166, 255, 0.3);
-        margin-bottom: 50px;
+    /* Forzar fondo oscuro */
+    [data-testid="stAppViewContainer"] {
+        background-color: #0d1117;
     }
-    
-    .nav-link {
-        color: #8b949e;
-        font-family: 'Arial', sans-serif;
-        font-size: 14px;
-        text-decoration: none;
-        letter-spacing: 1px;
+    /* Estilo para los botones del menú */
+    .stButton > button {
+        background-color: transparent;
+        color: white;
+        border: 1px solid #30363d;
+        width: 100%;
+        border-radius: 5px;
     }
-    
-    .nav-link:hover, .nav-link.active {
+    .stButton > button:hover {
+        border: 1px solid #58a6ff;
         color: #58a6ff;
     }
     </style>
-
-    <div class="nav-bar-vortex">
-        <a class="nav-link active" href="#">[HOME]</a>
-        <a class="nav-link" href="#">[NOSOTROS]</a>
-        <a class="nav-link" href="#">[DEPORTES]</a>
-        <a class="nav-link" href="#">[EFECTIVIDAD]</a>
-        <a class="nav-link" href="#">[PLANES]</a>
-        <a class="nav-link" href="#" style="color: #58a6ff; border: 1px solid #58a6ff; padding: 2px 10px;">[SUSCRIPCIÓN]</a>
-        <a class="nav-link" href="#">[CONTACTO]</a>
-    </div>
 """, unsafe_allow_html=True)
+
+# 3. Menú profesional usando Columnas (¡No falla!)
+cols = st.columns([1, 1, 1, 1, 1, 1, 1])
+botones = ["[HOME]", "[NOSOTROS]", "[DEPORTES]", "[EFECTIVIDAD]", "[PLANES]", "[SUSCRIPCIÓN]", "[CONTACTO]"]
+
+for i, col in enumerate(cols):
+    with col:
+        st.button(botones[i])
+
+st.markdown("---")
